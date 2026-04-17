@@ -248,7 +248,7 @@ export function SportHome() {
         </button>
         {showOtherGames && (
           <div className="absolute right-0 mt-2 w-44 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden">
-            <button onClick={() => { setShowOtherGames(false); navigate('/'); }}
+            <button onClick={() => { setShowOtherGames(false); navigate('/country'); }}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-200 hover:bg-slate-700 transition-colors">
               <Globe className="w-4 h-4 text-blue-400" />Country Game
             </button>

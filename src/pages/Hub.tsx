@@ -30,7 +30,7 @@ export default function Hub() {
             onClick={() => navigate('/sport')}
             className="card p-6 flex items-center gap-5 hover:border-orange-500/50 hover:bg-slate-700/80 transition-all duration-200 text-left group"
           >
-            <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
               <Dumbbell className="w-7 h-7 text-white" />
             </div>
             <div>
