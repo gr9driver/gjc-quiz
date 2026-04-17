@@ -2,6 +2,8 @@
 
 A web-based trivia quiz platform featuring multiple game modes, difficulty levels, a global leaderboard, and real-time personal best tracking. Currently includes a **Country Game** and a **Sport Game**.
 
+🌐 **Live site**: [https://gjc-quiz-game.netlify.app](https://gjc-quiz-game.netlify.app)
+
 ---
 
 ## Games
