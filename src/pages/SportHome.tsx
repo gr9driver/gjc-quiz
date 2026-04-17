@@ -106,6 +106,7 @@ export function SportHome() {
   const [nameSubmitted, setNameSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [submittedRank, setSubmittedRank] = useState<number | null>(null);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const [leaderboardMode, setLeaderboardMode] = useState<GameMode>('classic');
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
@@ -160,6 +161,10 @@ export function SportHome() {
     setLastCorrect(false);
     setOnFire(false);
     setBeatBest(false);
+    setNameSubmitted(false);
+    setPlayerName('');
+    setSubmitError(false);
+    setSubmittedRank(null);
     setGameState('playing');
   };
 
@@ -220,13 +225,21 @@ export function SportHome() {
     if (!playerName.trim()) return;
     setSubmitting(true);
     setSubmitError(false);
+    const ws = gameMode === 'classic' ? calcWeightedScore(finalScore, difficulty) : calcWeightedScore(bestStreak, difficulty);
     const entry: LeaderboardEntry = gameMode === 'classic'
-      ? { name: playerName.trim(), score: finalScore, total: questions.length, percentage: Math.round((finalScore / questions.length) * 100), weighted_score: calcWeightedScore(finalScore, difficulty), mode: 'classic', difficulty, game: 'sport' }
-      : { name: playerName.trim(), streak: bestStreak, score: bestStreak, weighted_score: calcWeightedScore(bestStreak, difficulty), mode: 'endless', difficulty, game: 'sport' };
+      ? { name: playerName.trim(), score: finalScore, total: questions.length, percentage: Math.round((finalScore / questions.length) * 100), weighted_score: ws, mode: 'classic', difficulty, game: 'sport' }
+      : { name: playerName.trim(), streak: bestStreak, score: bestStreak, weighted_score: ws, mode: 'endless', difficulty, game: 'sport' };
     const ok = await submitScore(entry);
+    if (ok) {
+      const refreshed = await fetchLeaderboard('sport', gameMode, 10);
+      setHomeLeaderboard(prev => ({ ...prev, [gameMode]: refreshed }));
+      const rank = refreshed.findIndex(e => e.name === playerName.trim() && e.weighted_score === ws);
+      setSubmittedRank(rank >= 0 ? rank + 1 : null);
+      setNameSubmitted(true);
+    } else {
+      setSubmitError(true);
+    }
     setSubmitting(false);
-    if (ok) setNameSubmitted(true);
-    else setSubmitError(true);
   };
 
   const openLeaderboard = async (mode: GameMode) => {
@@ -522,7 +535,7 @@ export function SportHome() {
                   {submitError && <p className="text-red-400 text-xs mt-2">Failed to submit — check your connection.</p>}
                 </div>
               ) : (
-                <p className="text-emerald-400 font-medium flex items-center justify-center gap-2"><Check className="w-4 h-4" />Score submitted!</p>
+                <p className="text-emerald-400 font-medium flex items-center justify-center gap-2"><Check className="w-4 h-4" />{submittedRank ? `Submitted! You're rank #${submittedRank}` : 'Score submitted!'}</p>
               )}
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
@@ -569,7 +582,7 @@ export function SportHome() {
                   {submitError && <p className="text-red-400 text-xs mt-2">Failed to submit — check your connection.</p>}
                 </div>
               ) : (
-                <p className="text-emerald-400 font-medium flex items-center justify-center gap-2"><Check className="w-4 h-4" />Score submitted!</p>
+                <p className="text-emerald-400 font-medium flex items-center justify-center gap-2"><Check className="w-4 h-4" />{submittedRank ? `Submitted! You're rank #${submittedRank}` : 'Score submitted!'}</p>
               )}
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
